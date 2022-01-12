@@ -1,0 +1,42 @@
+#define RCC_AHB1ENR *((int *)0X40023830)
+#define GPIOC_MODER *((int *)0x40020800)
+#define GPIOC_ODR *((int *)0x40020814)
+#define GPIOA_PUPDR *((int *)0x4002000C)
+#define GPIOA_IDR *((int *)0x40020010)
+
+void sw_LED_Init()
+{
+	RCC_AHB1ENR |= 0X5;
+	while(!(RCC_AHB1ENR & 0X5));
+	
+	GPIOC_MODER |= (0X1<<10);
+	GPIOC_ODR |= (0X1<<5);
+	
+	GPIOA_PUPDR |= 0X1;
+}
+void Toggle_LED()
+{
+	if(GPIOC_ODR & (0X1<<5))
+		GPIOC_ODR &= ~(0X1<<5);
+	else
+		GPIOC_ODR |= (0X1<<5);
+}
+void delay()
+{
+	int i;
+	for(i=0;i<350000;i++);
+}
+int main()
+{
+	sw_LED_Init();
+	
+	while(1)
+	{
+		if(!(GPIOA_IDR & 0X1))
+			Toggle_LED();
+		
+		delay();
+	}
+	
+	return 0;
+}

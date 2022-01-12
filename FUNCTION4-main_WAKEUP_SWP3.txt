@@ -1,0 +1,31 @@
+#define RCC_AHB1ENR *((int *)0x40023830)
+#define GPIOA_PUPDR *((int *)0x4002000C)
+#define GPIOA_IDR *((int *)0x40020010)
+
+int counter=0;
+void WAKEUP_SW_Init()
+{
+	RCC_AHB1ENR |= 0X1;
+	while(!(RCC_AHB1ENR & 0X1));
+	
+	GPIOA_PUPDR |= 0X1;
+}
+void delay()
+{
+	int i;
+	for(i=0;i<300000;i++);
+}
+int main()
+{
+	WAKEUP_SW_Init();
+	
+	while(1)
+	{
+		if(!(GPIOA_IDR & 0X1))
+			counter++;
+		
+		delay();
+	}
+	
+	return 0;
+}
